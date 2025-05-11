@@ -1,0 +1,235 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Attendance Records</title>
+    <style>
+        /* Main Styles */
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: #f5f5f5;
+            margin: 0;
+            padding: 20px;
+            color: #333;
+        }
+        
+        .container {
+            max-width: 1200px;
+            margin: 30px auto;
+            background: white;
+            padding: 30px;
+            border-radius: 8px;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+        }
+        
+        h1 {
+            color: #2c3e50;
+            margin-bottom: 5px;
+        }
+        
+        h2 {
+            color: #7f8c8d;
+            margin-top: 0;
+            margin-bottom: 30px;
+            font-weight: normal;
+        }
+        
+        /* Table Styles */
+        .table-container {
+            overflow-x: auto;
+        }
+        
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 20px 0;
+        }
+        
+        th {
+            background-color: #3498db;
+            color: white;
+            text-align: left;
+            padding: 12px 15px;
+        }
+        
+        td {
+            padding: 12px 15px;
+            border-bottom: 1px solid #ddd;
+        }
+        
+        tr:nth-child(even) {
+            background-color: #f8f9fa;
+        }
+        
+        tr:hover {
+            background-color: #f1f7fd;
+        }
+        
+        .status-present {
+            color: #27ae60;
+            font-weight: bold;
+        }
+        
+        .status-absent {
+            color: #e74c3c;
+            font-weight: bold;
+        }
+        
+        /* Button Styles */
+        .btn {
+            display: inline-block;
+            padding: 10px 20px;
+            background-color: #3498db;
+            color: white;
+            text-decoration: none;
+            border-radius: 4px;
+            margin-top: 20px;
+            transition: background-color 0.3s;
+        }
+        
+        .btn:hover {
+            background-color: #2980b9;
+        }
+        
+        /* Filter Controls */
+        .filter-controls {
+            margin-bottom: 20px;
+            display: flex;
+            gap: 15px;
+            flex-wrap: wrap;
+        }
+        
+        .filter-group {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        
+        label {
+            font-weight: 600;
+            color: #2c3e50;
+        }
+        
+        select, input {
+            padding: 8px 12px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+        }
+        
+        /* Responsive Design */
+        @media (max-width: 768px) {
+            .container {
+                padding: 15px;
+            }
+            
+            th, td {
+                padding: 8px 10px;
+                font-size: 14px;
+            }
+            
+            .filter-controls {
+                flex-direction: column;
+                gap: 10px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Attendance Records</h1>
+        <h2 th:text="'Tutor: ' + ${tutor.name}"></h2>
+        
+        <div class="filter-controls">
+            <div class="filter-group">
+                <label for="date-filter">Date:</label>
+                <input type="date" id="date-filter">
+            </div>
+            
+            <div class="filter-group">
+                <label for="status-filter">Status:</label>
+                <select id="status-filter">
+                    <option value="all">All</option>
+                    <option value="present">Present</option>
+                    <option value="absent">Absent</option>
+                </select>
+            </div>
+            
+            <div class="filter-group">
+                <label for="search">Search:</label>
+                <input type="text" id="search" placeholder="Student name...">
+            </div>
+        </div>
+        
+        <div class="table-container">
+            <table id="attendance-table">
+                <thead>
+                    <tr>
+                        <th>Student</th>
+                        <th>Check-in Time</th>
+                        <th>Location</th>
+                        <th>Status</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr th:each="attendance : ${attendances}">
+                        <td th:text="${attendance.student.name}"></td>
+                        <td th:text="${#temporals.format(attendance.checkInTime, 'yyyy-MM-dd HH:mm')}"></td>
+                        <td th:text="${attendance.location}"></td>
+                        <td>
+                            <span th:class="${attendance.status == 'PRESENT'} ? 'status-present' : 'status-absent'" 
+                                  th:text="${attendance.status}"></span>
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+        
+        <a th:href="@{/tutors}" class="btn">Back to Tutors</a>
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const table = document.getElementById('attendance-table');
+            const dateFilter = document.getElementById('date-filter');
+            const statusFilter = document.getElementById('status-filter');
+            const searchInput = document.getElementById('search');
+            
+            // Filter function
+            function filterTable() {
+                const dateValue = dateFilter.value;
+                const statusValue = statusFilter.value.toLowerCase();
+                const searchValue = searchInput.value.toLowerCase();
+                
+                const rows = table.querySelectorAll('tbody tr');
+                
+                rows.forEach(row => {
+                    const date = row.cells[1].textContent.split(' ')[0];
+                    const status = row.cells[3].textContent.toLowerCase();
+                    const studentName = row.cells[0].textContent.toLowerCase();
+                    
+                    const dateMatch = !dateValue || date === dateValue;
+                    const statusMatch = statusValue === 'all' || status === statusValue;
+                    const searchMatch = studentName.includes(searchValue);
+                    
+                    if (dateMatch && statusMatch && searchMatch) {
+                        row.style.display = '';
+                    } else {
+                        row.style.display = 'none';
+                    }
+                });
+            }
+            
+            // Event listeners for filters
+            dateFilter.addEventListener('change', filterTable);
+            statusFilter.addEventListener('change', filterTable);
+            searchInput.addEventListener('input', filterTable);
+            
+            // Set today's date as default filter
+            const today = new Date().toISOString().split('T')[0];
+            dateFilter.value = today;
+            filterTable();
+        });
+    </script>
+</body>
+</html>

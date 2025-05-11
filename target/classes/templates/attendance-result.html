@@ -1,0 +1,244 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Attendance Recorded</title>
+    <style>
+        /* Colorful Gradient Background */
+        body {
+            font-family: 'Poppins', sans-serif;
+            margin: 0;
+            padding: 0;
+            background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+
+        /* Card Container */
+        .result-card {
+            background: white;
+            border-radius: 20px;
+            box-shadow: 0 15px 30px rgba(0, 0, 0, 0.1);
+            width: 90%;
+            max-width: 500px;
+            padding: 40px;
+            text-align: center;
+            transform: translateY(0);
+            animation: float 3s ease-in-out infinite;
+        }
+
+        /* Floating Animation */
+        @keyframes float {
+            0%, 100% { transform: translateY(0); }
+            50% { transform: translateY(-10px); }
+        }
+
+        /* Checkmark Icon */
+        .checkmark {
+            width: 100px;
+            height: 100px;
+            border-radius: 50%;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            background: linear-gradient(135deg, #43e97b 0%, #38f9d7 100%);
+            margin-bottom: 25px;
+            box-shadow: 0 10px 20px rgba(67, 233, 123, 0.3);
+        }
+
+        .checkmark svg {
+            width: 50px;
+            height: 50px;
+            fill: white;
+        }
+
+        /* Text Styles */
+        h1 {
+            color: #2c3e50;
+            margin: 0 0 15px;
+            font-size: 28px;
+            font-weight: 700;
+        }
+
+        .message {
+            color: #7f8c8d;
+            font-size: 18px;
+            margin-bottom: 30px;
+            line-height: 1.5;
+        }
+
+        /* Student Info */
+        .student-info {
+            background: #f8f9fa;
+            border-radius: 12px;
+            padding: 20px;
+            margin: 25px 0;
+            text-align: left;
+        }
+
+        .info-row {
+            display: flex;
+            margin-bottom: 10px;
+        }
+
+        .info-label {
+            font-weight: 600;
+            color: #2c3e50;
+            width: 100px;
+        }
+
+        .info-value {
+            color: #7f8c8d;
+        }
+
+        /* Action Buttons */
+        .action-buttons {
+            display: flex;
+            justify-content: center;
+            gap: 15px;
+            margin-top: 30px;
+        }
+
+        .btn {
+            padding: 12px 25px;
+            border-radius: 50px;
+            font-weight: 600;
+            text-decoration: none;
+            transition: all 0.3s ease;
+            display: inline-block;
+            border: none;
+            cursor: pointer;
+        }
+
+        .btn-primary {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            box-shadow: 0 5px 15px rgba(102, 126, 234, 0.4);
+        }
+
+        .btn-primary:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 8px 20px rgba(102, 126, 234, 0.6);
+        }
+
+        .btn-secondary {
+            background: white;
+            color: #667eea;
+            border: 2px solid #667eea;
+        }
+
+        .btn-secondary:hover {
+            background: #f8f9fa;
+        }
+
+        /* Responsive Design */
+        @media (max-width: 600px) {
+            .result-card {
+                padding: 30px 20px;
+            }
+            
+            .action-buttons {
+                flex-direction: column;
+                gap: 10px;
+            }
+            
+            .btn {
+                width: 100%;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="result-card">
+        <div class="checkmark">
+            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
+                <path d="M9 16.17L4.83 12l-1.42 1.41L9 19 21 7l-1.41-1.41z"/>
+            </svg>
+        </div>
+        
+        <h1>Attendance Recorded!</h1>
+        <div class="message" th:text="${message}">Attendance recorded successfully for John Doe</div>
+        
+        <div class="student-info" th:if="${attendance}">
+            <div class="info-row">
+                <div class="info-label">Student:</div>
+                <div class="info-value" th:text="${attendance.student.name}">John Doe</div>
+            </div>
+            <div class="info-row">
+                <div class="info-label">Time:</div>
+                <div class="info-value" th:text="${#temporals.format(attendance.checkInTime, 'yyyy-MM-dd HH:mm')}">2023-05-15 09:30</div>
+            </div>
+            <div class="info-row">
+                <div class="info-label">Location:</div>
+                <div class="info-value" th:text="${attendance.location}">Main Campus</div>
+            </div>
+            <div class="info-row">
+                <div class="info-label">Status:</div>
+                <div class="info-value" style="color: #43e97b; font-weight: 600;" th:text="${attendance.status}">PRESENT</div>
+            </div>
+        </div>
+        
+        <div class="action-buttons">
+            <a th:href="@{/attendance/scan?tutorId={id}(id=${attendance.tutor.id})}" class="btn btn-primary">
+                Scan Another
+            </a>
+            <a th:href="@{/tutors}" class="btn btn-secondary">
+                Back to Tutors
+            </a>
+        </div>
+    </div>
+
+    <script>
+        // Add confetti effect for celebration
+        document.addEventListener('DOMContentLoaded', function() {
+            // Check if attendance was successfully recorded
+            if (document.querySelector('.checkmark')) {
+                // Simple animation for the checkmark
+                const checkmark = document.querySelector('.checkmark');
+                checkmark.style.transform = 'scale(0)';
+                setTimeout(() => {
+                    checkmark.style.transition = 'transform 0.5s ease-out';
+                    checkmark.style.transform = 'scale(1)';
+                }, 100);
+                
+                // Add colorful bubbles animation
+                createBubbles();
+            }
+            
+            function createBubbles() {
+                const colors = ['#43e97b', '#38f9d7', '#667eea', '#764ba2', '#ff7e5f', '#fccb90'];
+                const card = document.querySelector('.result-card');
+                
+                for (let i = 0; i < 15; i++) {
+                    const bubble = document.createElement('div');
+                    bubble.style.position = 'absolute';
+                    bubble.style.width = Math.random() * 20 + 10 + 'px';
+                    bubble.style.height = bubble.style.width;
+                    bubble.style.backgroundColor = colors[Math.floor(Math.random() * colors.length)];
+                    bubble.style.borderRadius = '50%';
+                    bubble.style.opacity = '0.6';
+                    bubble.style.top = Math.random() * 100 + '%';
+                    bubble.style.left = Math.random() * 100 + '%';
+                    bubble.style.zIndex = '-1';
+                   
+                    
+                    // Add animation keyframes dynamically
+                    const style = document.createElement('style');
+                    style.textContent = `
+                        @keyframes float-up {
+                            0% { transform: translate(0, 0) scale(1); opacity: 0.6; }
+                            100% { transform: translate(${Math.random() * 100 - 50}px, -150px) scale(0); opacity: 0; }
+                        }
+                    `;
+                    document.head.appendChild(style);
+                    
+                    card.appendChild(bubble);
+                }
+            }
+        });
+    </script>
+</body>
+</html>

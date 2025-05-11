@@ -1,0 +1,171 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Add Student</title>
+    <style>
+        /* CSS Styles */
+        body {
+            font-family: Arial, sans-serif;
+            line-height: 1.6;
+            margin: 0;
+            padding: 20px;
+            background-color: #f4f4f4;
+            color: #333;
+        }
+        .container {
+            max-width: 600px;
+            margin: 0 auto;
+            background: #fff;
+            padding: 20px;
+            box-shadow: 0 0 10px rgba(0,0,0,0.1);
+        }
+        h1 {
+            color: #444;
+            margin-bottom: 20px;
+        }
+        .form-group {
+            margin-bottom: 15px;
+        }
+        .form-group label {
+            display: block;
+            margin-bottom: 5px;
+            font-weight: bold;
+        }
+        .form-group input, 
+        .form-group select {
+            width: 100%;
+            padding: 8px;
+            box-sizing: border-box;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+        }
+        .btn {
+            display: inline-block;
+            background: #007bff;
+            color: #fff;
+            padding: 10px 20px;
+            text-decoration: none;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            margin-right: 10px;
+        }
+        .btn:hover {
+            background: #0069d9;
+        }
+        .btn-secondary {
+            background: #6c757d;
+        }
+        .btn-secondary:hover {
+            background: #5a6268;
+        }
+        .error {
+            color: #dc3545;
+            font-size: 0.9em;
+            margin-top: 5px;
+        }
+        input.error-field {
+            border-color: #dc3545;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Add New Student</h1>
+        
+        <form id="studentForm" th:action="@{/students/add}" th:object="${student}" method="post">
+            <div class="form-group">
+                <label for="name">Full Name *</label>
+                <input type="text" id="name" th:field="*{name}" required>
+                <div id="nameError" class="error"></div>
+            </div>
+            
+            <div class="form-group">
+                <label for="email">Email *</label>
+                <input type="email" id="email" th:field="*{email}" required>
+                <div id="emailError" class="error"></div>
+            </div>
+            
+            <div class="form-group">
+                <label for="phone">Phone</label>
+                <input type="tel" id="phone" th:field="*{phone}">
+            </div>
+            
+            <div class="form-group">
+                <label for="course">Course *</label>
+                <input type="text" id="course" th:field="*{course}" required>
+                <div id="courseError" class="error"></div>
+            </div>
+            
+            <div class="form-group">
+                <label for="university">University *</label>
+                <input type="text" id="university" th:field="*{university}" required>
+                <div id="universityError" class="error"></div>
+            </div>
+            
+            <div class="form-group">
+                <label for="tutor">Tutor</label>
+                <select id="tutor" th:field="*{tutor}">
+                    <option value="">-- Select Tutor --</option>
+                    <option th:each="tutor : ${tutors}" 
+                            th:value="${tutor.id}"
+                            th:text="${tutor.name}"></option>
+                </select>
+            </div>
+            
+            <button type="submit" class="btn">Save Student</button>
+            <a th:href="@{/students}" class="btn btn-secondary">Cancel</a>
+        </form>
+    </div>
+    
+    <script>
+        // Form Validation
+        document.addEventListener('DOMContentLoaded', function() {
+            const form = document.getElementById('studentForm');
+            
+            form.addEventListener('submit', function(e) {
+                let isValid = true;
+                
+                // Validate required fields
+                const requiredFields = [
+                    { id: 'name', errorId: 'nameError', message: 'Name is required' },
+                    { id: 'email', errorId: 'emailError', message: 'Email is required' },
+                    { id: 'course', errorId: 'courseError', message: 'Course is required' },
+                    { id: 'university', errorId: 'universityError', message: 'University is required' }
+                ];
+                
+                requiredFields.forEach(field => {
+                    const input = document.getElementById(field.id);
+                    const errorElement = document.getElementById(field.errorId);
+                    
+                    if (!input.value.trim()) {
+                        input.classList.add('error-field');
+                        errorElement.textContent = field.message;
+                        isValid = false;
+                    } else {
+                        input.classList.remove('error-field');
+                        errorElement.textContent = '';
+                    }
+                });
+                
+                // Validate email format
+                const email = document.getElementById('email');
+                const emailError = document.getElementById('emailError');
+                const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+                
+                if (email.value && !emailRegex.test(email.value)) {
+                    email.classList.add('error-field');
+                    emailError.textContent = 'Please enter a valid email address';
+                    isValid = false;
+                }
+                
+                if (!isValid) {
+                    e.preventDefault();
+                }
+            });
+        });
+    </script>
+</body>
+</html>

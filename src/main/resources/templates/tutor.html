@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Tutor Management</title>
+    <style>
+        body { font-family: Arial, sans-serif; margin: 20px; }
+        .container { max-width: 1200px; margin: 0 auto; }
+        table { width: 100%; border-collapse: collapse; }
+        th, td { padding: 12px; text-align: left; border-bottom: 1px solid #ddd; }
+        th { background-color: #f2f2f2; }
+        .btn { padding: 8px 16px; background-color: #4CAF50; color: white; 
+               border: none; border-radius: 4px; cursor: pointer; text-decoration: none; }
+        .btn:hover { background-color: #45a049; }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Tutor Management</h1>
+        <a th:href="@{/tutors/add}" class="btn">Add New Tutor</a>
+        <a th:href="@{/students}" class="btn">View Students</a>
+        
+        <table>
+            <thead>
+                <tr>
+                    <th>Name</th>
+                    <th>Email</th>
+                    <th>Department</th>
+                    <th>Students</th>
+                    <th>Actions</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr th:each="tutor : ${tutors}">
+                    <td th:text="${tutor.name}"></td>
+                    <td th:text="${tutor.email}"></td>
+                    <td th:text="${tutor.department}"></td>
+                    <td th:text="${tutor.students?.size()} ?: 0"></td>
+                    <td>
+                        <a th:href="@{/attendance/view/{id}(id=${tutor.id})}" class="btn">View Attendance</a>
+                        <a th:href="@{/attendance/scan?tutorId={id}(id=${tutor.id})}" class="btn">Take Attendance</a>
+                    </td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+</body>
+</html>

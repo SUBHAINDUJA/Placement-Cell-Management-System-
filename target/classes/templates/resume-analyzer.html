@@ -1,0 +1,150 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Smart ATS Resume Analyzer</title>
+    <style>
+        /* Global styles */
+        body {
+            font-family: 'Roboto', sans-serif;
+            background: #f0f4f8;
+            color: #333;
+            padding: 50px 0;
+            margin: 0;
+        }
+
+        h1 {
+            text-align: center;
+            color: #4B9CD3;
+            font-size: 36px;
+            margin-bottom: 20px;
+        }
+
+        .content {
+            background-color: #ffffff;
+            max-width: 700px;
+            margin: 0 auto;
+            padding: 30px;
+            border-radius: 15px;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+        }
+
+        .content p {
+            font-size: 18px;
+            color: #555;
+            margin-bottom: 20px;
+            text-align: center;
+        }
+
+        .file-input {
+            margin-top: 15px;
+            padding: 15px;
+            font-size: 16px;
+            width: 100%;
+            border: 2px solid #d1d8e0;
+            border-radius: 8px;
+            background-color: #fafafa;
+            color: #333;
+        }
+
+        select, button {
+            margin-top: 20px;
+            padding: 12px;
+            font-size: 16px;
+            border: 2px solid #d1d8e0;
+            border-radius: 8px;
+            width: 100%;
+            background-color: #fafafa;
+            color: #333;
+        }
+
+        button {
+            background-color: #4B9CD3;
+            color: white;
+            cursor: pointer;
+            border: none;
+            transition: background-color 0.3s ease;
+        }
+
+        button:hover {
+            background-color: #3a82b6;
+        }
+
+        /* Result Section */
+        #result-box {
+            margin-top: 40px;
+            padding: 20px;
+            background-color: #f9f9f9;
+            border-radius: 10px;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+        }
+
+        #upload-msg {
+            font-size: 18px;
+            font-weight: bold;
+            color: #4CAF50;
+            text-align: center;
+        }
+
+        #analysis-summary, #recommendations {
+            font-size: 16px;
+            margin-top: 10px;
+        }
+
+        /* Mobile Responsiveness */
+        @media screen and (max-width: 768px) {
+            .content {
+                padding: 20px;
+                width: 90%;
+            }
+        }
+    </style>
+</head>
+<body>
+    <h1>Smart ATS Resume Builder and Analyzer</h1>
+    <div class="content">
+        <p>Upload your resume (PDF format) to get analysis and recommendations for improvement.</p>
+        
+        <!-- Resume Upload Form -->
+        <form id="resume-form" enctype="multipart/form-data" action="/uploadResume" method="POST">
+            <input type="file" name="file" accept=".pdf" required class="file-input">
+            <select name="domain" class="dropdown">
+                <option value="software">Software Engineering</option>
+                <option value="marketing">Marketing</option>
+                <option value="finance">Finance</option>
+                <option value="design">Design</option>
+            </select>
+            <button type="submit" class="button">Upload Resume</button>
+        </form>
+
+        <!-- Upload result and analysis section -->
+        <div id="result-box">
+            <h3>Upload Result</h3>
+            <p id="upload-msg"></p>
+            <p><strong>Analysis:</strong> <span id="analysis-summary"></span></p>
+            <p><strong>Recommendations:</strong> <span id="recommendations"></span></p>
+        </div>
+    </div>
+
+    <script>
+        // Handle form submission to upload resume
+        document.getElementById("resume-form").onsubmit = async function(event) {
+            event.preventDefault();
+            const formData = new FormData(this);
+
+            const response = await fetch("/uploadResume", {
+                method: "POST",
+                body: formData
+            });
+
+            const result = await response.text();
+            document.getElementById("upload-msg").textContent = result;
+
+            // Simulate the analysis and recommendation content being fetched from the backend
+            document.getElementById("analysis-summary").textContent = "ATS Score: 85/100. Keywords matched for selected domain.";
+            document.getElementById("recommendations").textContent = "Add a summary section. Highlight domain-specific skills.";
+        };
+    </script>
+</body>
+</html>

@@ -1,0 +1,184 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Placement Home</title>
+    <style>
+        body {
+            margin: 0;
+            font-family: Arial, sans-serif;
+            background: url('https://nec.edu.in/wp-content/uploads/2025/02/NEC-Front-Mobile-Slider-scaled.webp') no-repeat center center fixed;
+            background-size: cover;
+            color: white;
+        }
+
+        .navbar {
+            background-color: rgba(71, 34, 207, 0.7);
+            padding: 15px 30px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+        }
+
+        .nav-links {
+            display: flex;
+            align-items: center;
+            flex-wrap: wrap;
+            margin-left: -10px; /* Shift links slightly left */
+        }
+
+        .nav-links > div,
+        .nav-links a {
+            position: relative;
+            margin-left: 15px;
+            color: white;
+            text-decoration: none;
+            font-weight: bold;
+            cursor: pointer;
+            white-space: nowrap;
+        }
+
+        .dropdown {
+            position: relative;
+        }
+
+        .dropdown-content {
+            display: none;
+            position: absolute;
+            background-color: #0056a3;
+            min-width: 220px;
+            box-shadow: 0px 8px 16px rgba(0,0,0,0.2);
+            z-index: 1;
+            top: 100%;
+            right: 0; /* Ensures dropdown doesn't overflow */
+        }
+
+        .dropdown-content a {
+            color: white;
+            padding: 12px 16px;
+            text-decoration: none;
+            display: block;
+            border-bottom: 1px solid #ccc;
+        }
+
+        .dropdown-content a:nth-child(1),
+        .dropdown-content a:nth-child(2),
+        .dropdown-content a:nth-child(3),
+        .dropdown-content a:nth-child(5) {
+            color: gold;
+        }
+
+        .dropdown-content a:hover {
+            background-color: #004080;
+        }
+
+        .dropdown.active .dropdown-content {
+            display: block;
+        }
+
+        .welcome {
+            text-align: center;
+            margin-top: 150px;
+        }
+
+        h1 {
+            font-size: 60px;
+            color: #fbf9fc; /* Tomato color for the heading */
+            margin: 0;
+        }
+
+        p {
+            font-size: 24px;
+            color: #110f02; /* Gold color for the paragraph */
+            font-weight: bold;
+            margin-top: 10px;
+        }
+
+        .flash-news {
+            background-color: rgba(32, 1, 82, 0.7);
+            color: gold;
+            font-size: 22px;
+            padding: 10px 20px;
+            text-align: center;
+            margin-top: 30px;
+            animation: scrollNews 10s linear infinite;
+        }
+
+        @keyframes scrollNews {
+            0% {
+                transform: translateX(100%);
+            }
+            100% {
+                transform: translateX(-100%);
+            }
+        }
+
+        @media (max-width: 600px) {
+            .nav-links {
+                flex-direction: column;
+                align-items: flex-start;
+                margin-left: 0;
+            }
+
+            .dropdown-content {
+                right: auto;
+                left: 0;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="navbar">
+        <div class="logo"><a href="/" style="color: white;">NEC Placement Cell</a></div>
+        <div class="nav-links">
+            <a href="/tutors">Tutors</a>
+            <a href="/students">Students</a>
+            <div class="dropdown" onclick="toggleDropdown(this)">
+                <div>Placement ▼</div>
+                <div class="dropdown-content">
+                    <a href="/placement/introduction">Introduction</a>
+                    
+                    <a href="/placement/training/innovations">Training</a>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="flash-news">
+        <span id="news-content">Latest Update: 200+ Students Placed | 50+ Companies Participating</span>
+    </div>
+
+    <div class="welcome">
+        <h1>Welcome to the Placement Cell</h1>
+        <h2>Empowering Students for a Brighter Future</h2>
+    </div>
+
+    <script>
+        function toggleDropdown(element) {
+            const currentlyOpen = document.querySelector('.dropdown.active');
+            if (currentlyOpen && currentlyOpen !== element) {
+                currentlyOpen.classList.remove('active');
+            }
+            element.classList.toggle('active');
+        }
+
+        window.addEventListener('click', function(event) {
+            const dropdowns = document.querySelectorAll('.dropdown');
+            dropdowns.forEach(drop => {
+                if (!drop.contains(event.target)) {
+                    drop.classList.remove('active');
+                }
+            });
+        });
+
+        // Example: Dynamically updating the flash news content
+        const newsContent = document.getElementById('news-content');
+        const studentsPlaced = 250;  // Dynamic number
+        const companiesParticipating = 60;  // Dynamic number
+        newsContent.innerText = `Latest Update: ${studentsPlaced} Students Placed | ${companiesParticipating} Companies Participating`;
+    </script>
+
+</body>
+</html>

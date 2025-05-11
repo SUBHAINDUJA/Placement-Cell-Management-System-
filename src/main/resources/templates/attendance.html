@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>QR Attendance Scanner</title>
+    <style>
+        body { font-family: Arial, sans-serif; margin: 20px; text-align: center; }
+        .container { max-width: 600px; margin: 0 auto; }
+        #qr-reader { width: 100%; margin: 20px auto; }
+        #qr-reader-results { margin: 20px 0; padding: 10px; border: 1px solid #ddd; }
+        .btn { padding: 10px 20px; background-color: #4CAF50; color: white; 
+               border: none; border-radius: 4px; cursor: pointer; margin-top: 20px; }
+        .btn:disabled { background-color: #cccccc; cursor: not-allowed; }
+        .alert { padding: 10px; margin-bottom: 20px; border-radius: 4px; }
+        .success { background-color: #dff0d8; color: #3c763d; border: 1px solid #d6e9c6; }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Scan Student QR Code</h1>
+        <div id="qr-reader"></div>
+        <div id="qr-reader-results"></div>
+        
+        <form id="attendanceForm" th:action="@{/attendance/record}" method="post">
+            <input type="hidden" id="qrData" name="qrData">
+            <input type="hidden" id="tutorId" name="tutorId" th:value="${tutorId}">
+            <input type="hidden" id="location" name="location" value="Company">
+            <button type="submit" class="btn" id="submitBtn" disabled>Record Attendance</button>
+        </form>
+    </div>
+
+    <script src="https://unpkg.com/html5-qrcode@2.0.9/dist/html5-qrcode.min.js"></script>
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const qrDataInput = document.getElementById('qrData');
+            const submitBtn = document.getElementById('submitBtn');
+            const resultElement = document.getElementById('qr-reader-results');
+            
+            function onScanSuccess(decodedText) {
+                qrDataInput.value = decodedText;
+                submitBtn.disabled = false;
+                resultElement.innerHTML = `
+                    <div class="alert success">
+                        QR Code scanned! Student ID: ${decodedText.split(':')[1]}
+                    </div>
+                `;
+                setTimeout(() => document.getElementById('attendanceForm').submit(), 1000);
+            }
+
+            const html5QrcodeScanner = new Html5QrcodeScanner(
+                "qr-reader", { fps: 10, qrbox: 250 });
+            html5QrcodeScanner.render(onScanSuccess);
+        });
+    </script>
+</body>
+</html>
